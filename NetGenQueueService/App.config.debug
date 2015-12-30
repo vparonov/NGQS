@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net" />
+    <section name="pluginsettings" type="NetGenQueueService.Configuration.Plugins.Section, NetGenQueueService" />
+    <section name="sharedSettings" type="NetGenQueueService.Configuration.SharedSettings.Section, NetGenQueueService" />
+  </configSections>
+
+  <log4net debug="false">
+    <appender name="RollingLogFileAppender" type="log4net.Appender.RollingFileAppender">
+      <file value=".\\Log.txt" />
+      <appendToFile value="true" />
+      <rollingStyle value="Size" />
+      <maxSizeRollBackups value="10" />
+      <maximumFileSize value="10MB" />
+      <staticLogFileName value="true" />
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="%-5p %d %5r %c{1}()->%m%n" />
+      </layout>
+    </appender>
+    <appender name="ColoredConsoleAppender" type="log4net.Appender.ColoredConsoleAppender">
+      <mapping>
+        <level value="ERROR" />
+        <foreColor value="White" />
+        <backColor value="Red, HighIntensity" />
+      </mapping>
+      <mapping>
+        <level value="INFO" />
+        <foreColor value="Green" />
+        <backColor value="White, HighIntensity" />
+      </mapping>
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="%-5p %d %5r %c{1}()->%m%n" />
+      </layout>
+    </appender>
+    <root>
+      <level value="DEBUG" />
+      <!--<appender-ref ref="RollingLogFileAppender" />-->
+      <appender-ref ref="ColoredConsoleAppender" />
+    </root>
+  </log4net>
+
+
+  <pluginsettings>
+    <plugins>
+
+      <plugin alias="Producer"   assembly="SandboxPlugin" type="SandboxPlugin.Logger" number-of-instances="1">
+        <settings>
+          <param key="connectionString" value="shared!rabbitmq_connectionString"/>
+          <param key="enableLogging"    value="false" />
+        </settings>
+      </plugin>
+      <plugin alias="Consumer" assembly="NotificationsPlugin" type="NotificationsPlugin.RabbitMailSender" number-of-instances="1">
+        <settings>
+          <param key="connectionString" value="shared!rabbitmq_connectionString"/>
+          <param key="host" value ="shared!smtp_host" />
+          <param key="port" value ="shared!smtp_port" /> 
+          <param key="userName" value ="shared!smtp_userName" />
+          <param key="password" value ="shared!smtp_password" />
+          <param key="enableSsl" value ="shared!smtp_enableSsl" />
+          <!--<param key="demoEMailAccount" value="vparonov@gmail.com" />-->
+        </settings>
+      </plugin>
+    </plugins>
+  </pluginsettings>
+
+  <sharedSettings>
+    <settings>
+      <param key="SQLServerConnectionString" value="Data Source=superserver;Initial Catalog=AtlasSting;Persist Security Info=True;User ID=sa;Password=sas45"/>
+      <param key="rabbitmq_connectionString" value ="host=heavyserver;virtualHost=/;username=vangel;password=big_mouth" />
+      <param key="smtp_host"      value ="xgmail.applss.com"/>
+      <param key="smtp_port"      value ="25"/>
+      <param key="smtp_userName"  value ="v_paronov@applss.com"/>
+      <param key="smtp_password"  value ="big_mouth"/>
+      <param key="smtp_enableSsl" value ="false"/>
+    </settings>
+  </sharedSettings>
+  
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.AspNet.SignalR.Core" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-1.2.1.0" newVersion="1.2.1.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="RabbitMQ.Client" publicKeyToken="89e7d7c5feba84ce" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.2.4.0" newVersion="3.2.4.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="log4net" publicKeyToken="669e0ddf0bb1aa2a" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-1.2.13.0" newVersion="1.2.13.0" />
+      </dependentAssembly>      
+    </assemblyBinding>
+  </runtime>
+</configuration>
